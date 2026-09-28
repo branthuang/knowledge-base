@@ -12,9 +12,9 @@
 
 ## 3. 核心实体 ORM 数据模型与 Alembic 迁移
 
-- [ ] 3.1 基于 SQLAlchemy 2.0 实现核心实体 ORM：`Category`, `Tag`, `KnowledgeTag`, `KnowledgeItem`, `KnowledgeSource`, `SearchSession`, `EmbeddingChunk`, `Asset`
-- [ ] 3.2 配置 Alembic 异步迁移环境，编写初始化迁移脚本（包含启用 `pgvector` 扩展与建表语句）
-- [ ] 3.3 实现系统初始化数据种子逻辑，自动写入预置顶级分类“技术类”与“公司知识类”
+- [x] 3.1 基于 SQLAlchemy 2.0 实现核心实体 ORM：`Category`, `Tag`, `KnowledgeTag`, `KnowledgeItem`, `KnowledgeSource`, `SearchSession`, `EmbeddingChunk`, `Asset`
+- [x] 3.2 配置 Alembic 异步迁移环境，编写初始化迁移脚本（包含启用 `pgvector` 扩展与建表语句）
+- [x] 3.3 实现系统初始化数据种子逻辑，自动写入预置顶级分类“技术类”与“公司知识类”
 
 ## 4. 基础设施适配层（Provider Adapters）
 
