@@ -12,11 +12,11 @@
 
 ## 3. 统一搜索中心与知识回流抽屉
 
-- [ ] 3.1 实现 4 种搜索模式切换控件与多维结构化过滤侧栏（级联分类树与多标签）
-- [ ] 3.2 实现本地知识命中卡片、充分性提示条与 AI 增强回答（附带可追溯公网 Citations）组件
-- [ ] 3.3 实现知识回流入库预览与相似防重抽屉 `frontend/src/components/inflow/InflowDrawer.tsx`
-- [ ] 3.4 完成统一搜索中心页面端到端交互串联 `frontend/src/app/search/page.tsx`
+- [x] 3.1 实现 4 种搜索模式切换控件与多维结构化过滤侧栏（级联分类树与多标签）
+- [x] 3.2 实现本地知识命中卡片、充分性提示条与 AI 增强回答（附带可追溯公网 Citations）组件
+- [x] 3.3 实现知识回流入库预览与相似防重抽屉 `frontend/src/components/inflow/InflowDrawer.tsx`
+- [x] 3.4 完成统一搜索中心页面端到端交互串联 `frontend/src/app/search/page.tsx`
 
 ## 4. 前端构建校验与端到端质量验收
 
-- [ ] 4.1 执行静态类型校验（TypeScript `tsc --noEmit`），确保前端工程无报错并与后端接口完全对齐
+- [x] 4.1 执行静态类型校验（TypeScript `tsc --noEmit`），确保前端工程无报错并与后端接口完全对齐
