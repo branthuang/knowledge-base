@@ -6,9 +6,9 @@
 
 ## 2. 系统核心配置与数据库持久层底座
 
-- [ ] 2.1 实现后端系统全局配置模块 `backend/app/core/config.py`，支持环境变量及 `.env` 解析
-- [ ] 2.2 实现异步数据库引擎与会话工厂 `backend/app/db/session.py`，支持健康检查与连接池
-- [ ] 2.3 实现 Redis 连接池管理模块 `backend/app/core/redis.py`
+- [x] 2.1 实现后端系统全局配置模块 `backend/app/core/config.py`，支持环境变量及 `.env` 解析
+- [x] 2.2 实现异步数据库引擎与会话工厂 `backend/app/db/session.py`，支持健康检查与连接池
+- [x] 2.3 实现 Redis 连接池管理模块 `backend/app/core/redis.py`
 
 ## 3. 核心实体 ORM 数据模型与 Alembic 迁移
 
