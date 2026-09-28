@@ -18,9 +18,9 @@
 
 ## 4. 基础设施适配层（Provider Adapters）
 
-- [ ] 4.1 定义与实现 LLM Provider 抽象基类及 OpenAI 兼容适配器 `OpenAICompatibleProvider`，支持连通性检测
-- [ ] 4.2 定义与实现 Embedding Provider 抽象基类及 OpenAI 兼容适配器 `OpenAICompatibleEmbeddingProvider`
-- [ ] 4.3 定义 Search Provider 协议接口与数据契约 `SearchCitation`, `SearchResult`
+- [x] 4.1 定义与实现 LLM Provider 抽象基类及 OpenAI 兼容适配器 `OpenAICompatibleProvider`，支持连通性检测
+- [x] 4.2 定义与实现 Embedding Provider 抽象基类及 OpenAI 兼容适配器 `OpenAICompatibleEmbeddingProvider`
+- [x] 4.3 定义 Search Provider 协议接口与数据契约 `SearchCitation`, `SearchResult`
 
 ## 5. 基础设施健康检查与自动化测试验收
 
