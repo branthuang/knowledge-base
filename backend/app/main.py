@@ -8,6 +8,8 @@ from app.api.categories import router as categories_router
 from app.api.tags import router as tags_router
 from app.api.knowledge import router as knowledge_router
 from app.api.search import router as search_router
+from app.api.ai_search import router as ai_search_router
+from app.api.inflow import router as inflow_router
 from app.core.redis import close_redis
 
 logging.basicConfig(
@@ -47,6 +49,8 @@ app.include_router(categories_router, prefix=settings.API_PREFIX)
 app.include_router(tags_router, prefix=settings.API_PREFIX)
 app.include_router(knowledge_router, prefix=settings.API_PREFIX)
 app.include_router(search_router, prefix=settings.API_PREFIX)
+app.include_router(ai_search_router, prefix=settings.API_PREFIX)
+app.include_router(inflow_router, prefix=settings.API_PREFIX)
 
 
 @app.get("/")

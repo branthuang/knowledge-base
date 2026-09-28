@@ -12,6 +12,6 @@
 
 ## 3. 路由注册与全量端到端验收
 
-- [ ] 3.1 实现 AI 搜索与会话 API 路由 `backend/app/api/ai_search.py` 并在 `backend/app/main.py` 挂载
-- [ ] 3.2 实现知识回流 API 路由 `backend/app/api/inflow.py` 并在 `backend/app/main.py` 挂载
-- [ ] 3.3 执行全量自动化测试套件与代码静态校验，确保 100% 验收通过
+- [x] 3.1 实现 AI 搜索与会话 API 路由 `backend/app/api/ai_search.py` 并在 `backend/app/main.py` 挂载
+- [x] 3.2 实现知识回流 API 路由 `backend/app/api/inflow.py` 并在 `backend/app/main.py` 挂载
+- [x] 3.3 执行全量自动化测试套件与代码静态校验，确保 100% 验收通过

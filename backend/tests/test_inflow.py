@@ -192,3 +192,63 @@ async def test_confirm_inflow_update_existing(inflow_db):
         # Check session link
         sess = await session.get(SearchSession, "sess-docker-1")
         assert sess.saved_knowledge_id == "k-existing-docker"
+
+
+@pytest.mark.asyncio
+async def test_inflow_http_endpoints(inflow_db):
+    import httpx
+    from app.main import app
+    from app.db.session import get_db_session
+    from app.api import inflow as inflow_api_module
+
+    session_factory = inflow_db
+    async def _override_db():
+        async with session_factory() as session:
+            yield session
+
+    app.dependency_overrides[get_db_session] = _override_db
+
+    mock_emb = MockEmbedding()
+    search_svc = HybridSearchService(embedding_provider=mock_emb)
+    index_svc = IndexService(embedding_provider=mock_emb)
+    custom_inflow_svc = InflowService(search_svc=search_svc, index_svc=index_svc)
+
+    original_svc = inflow_api_module.default_inflow_service
+    inflow_api_module.default_inflow_service = custom_inflow_svc
+
+    try:
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            # 1. POST /api/inflow/preview
+            preview_res = await client.post(
+                "/api/inflow/preview",
+                json={"session_id": "sess-docker-1"},
+            )
+            assert preview_res.status_code == 200
+            preview_data = preview_res.json()
+            assert preview_data["session_id"] == "sess-docker-1"
+            assert "Docker" in preview_data["recommended_title"]
+
+            # 2. POST /api/inflow/confirm
+            confirm_res = await client.post(
+                "/api/inflow/confirm",
+                json={
+                    "session_id": "sess-docker-1",
+                    "action": "create_new",
+                    "title": "Docker 容器镜像构建规范",
+                    "summary": "生产级别的镜像优化指南",
+                    "blocks": [
+                        {"type": "heading", "content": "镜像构建规范"},
+                        {"type": "paragraph", "content": "保持基础镜像轻量。"},
+                    ],
+                    "status": "published",
+                },
+            )
+            assert confirm_res.status_code == 201
+            confirm_data = confirm_res.json()
+            assert confirm_data["title"] == "Docker 容器镜像构建规范"
+            assert confirm_data["source_type"] == "ai_search"
+    finally:
+        inflow_api_module.default_inflow_service = original_svc
+        app.dependency_overrides.clear()
+

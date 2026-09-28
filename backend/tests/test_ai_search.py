@@ -266,3 +266,60 @@ async def test_search_session_persistence_and_retrieval(ai_search_db):
         assert detail.id == resp.session_id
         assert detail.mode == "direct_ai"
         assert len(detail.citations_json) == 2
+
+
+@pytest.mark.asyncio
+async def test_ai_search_http_endpoints(ai_search_db):
+    import httpx
+    from app.main import app
+    from app.db.session import get_db_session
+    from app.api import ai_search as ai_search_api_module
+
+    session_factory = ai_search_db
+    async def _override_db():
+        async with session_factory() as session:
+            yield session
+
+    app.dependency_overrides[get_db_session] = _override_db
+
+    mock_llm = MockLLM()
+    mock_search = MockSearch()
+    search_svc = HybridSearchService(embedding_provider=MockEmbedding())
+    custom_ai_svc = AISearchService(
+        llm_provider=mock_llm,
+        search_provider=mock_search,
+        hybrid_search_svc=search_svc,
+    )
+    original_svc = ai_search_api_module.default_ai_search_service
+    ai_search_api_module.default_ai_search_service = custom_ai_svc
+
+    try:
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            # 1. POST /api/ai-search
+            post_res = await client.post(
+                "/api/ai-search",
+                json={"query": "FastAPI 生产部署指南", "mode": "knowledge_first", "minimum_score": 0.50},
+            )
+            assert post_res.status_code == 200
+            post_data = post_res.json()
+            sess_id = post_data["session_id"]
+            assert post_data["is_sufficient"] is True
+
+            # 2. GET /api/ai-search/sessions
+            list_res = await client.get("/api/ai-search/sessions")
+            assert list_res.status_code == 200
+            list_data = list_res.json()
+            assert len(list_data) >= 1
+            assert list_data[0]["id"] == sess_id
+
+            # 3. GET /api/ai-search/sessions/{sess_id}
+            detail_res = await client.get(f"/api/ai-search/sessions/{sess_id}")
+            assert detail_res.status_code == 200
+            detail_data = detail_res.json()
+            assert detail_data["id"] == sess_id
+            assert detail_data["query"] == "FastAPI 生产部署指南"
+    finally:
+        ai_search_api_module.default_ai_search_service = original_svc
+        app.dependency_overrides.clear()
+

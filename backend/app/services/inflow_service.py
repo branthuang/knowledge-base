@@ -265,7 +265,7 @@ class InflowService:
             except Exception as e:
                 logger.error("Failed to build vector index for in-flowed knowledge: %s", e)
 
-        return target_item
+        return await get_knowledge_by_id(session, target_item.id)
 
 
 # Global default inflow service instance
