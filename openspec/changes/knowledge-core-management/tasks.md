@@ -12,9 +12,9 @@
 
 ## 3. 标签系统服务与 API（含标签合并与统计）
 
-- [ ] 3.1 实现标签 DTO 数据契约 `backend/app/schemas/tag.py`，包含 CRUD 与合并入参
-- [ ] 3.2 实现标签领域服务 `backend/app/services/tag_service.py`，包含使用统计与标签合并（关联关系安全迁移）事务
-- [ ] 3.3 实现标签 API 路由 `backend/app/api/tags.py` 并编写自动化集成测试 `backend/tests/test_tag_api.py`
+- [x] 3.1 实现标签 DTO 数据契约 `backend/app/schemas/tag.py`，包含 CRUD 与合并入参
+- [x] 3.2 实现标签领域服务 `backend/app/services/tag_service.py`，包含使用统计与标签合并（关联关系安全迁移）事务
+- [x] 3.3 实现标签 API 路由 `backend/app/api/tags.py` 并编写自动化集成测试 `backend/tests/test_tag_api.py`
 
 ## 4. 知识点核心管理与回收站生命周期
 
