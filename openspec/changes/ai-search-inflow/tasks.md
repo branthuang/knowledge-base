@@ -6,9 +6,9 @@
 
 ## 2. 知识沉淀回流流水线
 
-- [ ] 2.1 实现知识回流入库契约 `backend/app/schemas/inflow.py`，定义预览与确认请求响应模型
-- [ ] 2.2 实现知识沉淀回流服务 `backend/app/services/inflow_service.py`，实现结构化块转换、智能标签分类推荐、相似防重检测与确认入库落盘
-- [ ] 2.3 编写知识回流流水线单元测试 `backend/tests/test_inflow.py`
+- [x] 2.1 实现知识回流入库契约 `backend/app/schemas/inflow.py`，定义预览与确认请求响应模型
+- [x] 2.2 实现知识沉淀回流服务 `backend/app/services/inflow_service.py`，实现结构化块转换、智能标签分类推荐、相似防重检测与确认入库落盘
+- [x] 2.3 编写知识回流流水线单元测试 `backend/tests/test_inflow.py`
 
 ## 3. 路由注册与全量端到端验收
 

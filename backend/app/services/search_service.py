@@ -68,6 +68,25 @@ def extract_snippet(text: str, query: str, terms: List[str], max_len: int = 160)
     return snippet
 
 
+def extract_search_terms(query: str) -> List[str]:
+    """Extract search terms and Chinese shingles for enhanced multi-token matching."""
+    raw_tokens = [t for t in re.split(r"[\s,，、；;]+", query.strip()) if t]
+    all_terms = list(raw_tokens)
+    for tok in raw_tokens:
+        c_chars = [c for c in tok if '\u4e00' <= c <= '\u9fff']
+        if len(c_chars) >= 3:
+            for i in range(len(tok) - 1):
+                sub2 = tok[i:i+2]
+                if sub2 not in all_terms and len(sub2.strip()) > 1:
+                    all_terms.append(sub2)
+            if len(tok) >= 4:
+                for i in range(len(tok) - 2):
+                    sub3 = tok[i:i+3]
+                    if sub3 not in all_terms and len(sub3.strip()) > 2:
+                        all_terms.append(sub3)
+    return all_terms
+
+
 class HybridSearchService:
     """
     Hybrid Search Engine implementing:
@@ -90,7 +109,7 @@ class HybridSearchService:
 
     async def search(self, session: AsyncSession, request: SearchRequest) -> SearchResponse:
         q_raw = request.query.strip()
-        terms = [t for t in re.split(r"[\s,，、；;]+", q_raw) if t]
+        terms = extract_search_terms(q_raw)
 
         # 1. Resolve structured filters
         conditions = [KnowledgeItem.status != "trashed"]
@@ -188,11 +207,19 @@ class HybridSearchService:
             item_summary_lower = (item.summary or "").lower()
             item_plain_lower = (item.plain_text or "").lower()
 
-            # Exact title match
+            # Exact or substring title match
             if q_lower == item_title_lower:
                 raw_kw_score += 15.0
             elif q_lower in item_title_lower:
                 raw_kw_score += 10.0
+            else:
+                # Check character overlap ratio on title
+                q_chars = [c for c in q_lower if '\u4e00' <= c <= '\u9fff' or c.isalnum()]
+                if q_chars:
+                    matched_chars = sum(1 for c in q_chars if c in item_title_lower)
+                    char_ratio = matched_chars / len(q_chars)
+                    if char_ratio >= 0.5:
+                        raw_kw_score += 8.0 * char_ratio
 
             # Term level matching
             if terms:
