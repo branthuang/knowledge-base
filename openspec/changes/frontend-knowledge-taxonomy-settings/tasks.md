@@ -12,9 +12,9 @@
 
 ## 3. 安全回收站与系统备份设置
 
-- [ ] 3.1 实现回收站列表、一键恢复与彻底删除页面 `frontend/src/app/trash/page.tsx`
-- [ ] 3.2 实现全量标准 ZIP 导出下载、ZIP 文件上传恢复与全量向量重建交互页面 `frontend/src/app/settings/page.tsx`
+- [x] 3.1 实现回收站列表、一键恢复与彻底删除页面 `frontend/src/app/trash/page.tsx`
+- [x] 3.2 实现全量标准 ZIP 导出下载、ZIP 文件上传恢复与全量向量重建交互页面 `frontend/src/app/settings/page.tsx`
 
 ## 4. 全局编译构建与端到端质量验收
 
-- [ ] 4.1 执行前端静态类型校验（`npm run typecheck`）与生产构建（`npm run build`），确保全站路由畅通无阻
+- [x] 4.1 执行前端静态类型校验（`npm run typecheck`）与生产构建（`npm run build`），确保全站路由畅通无阻
