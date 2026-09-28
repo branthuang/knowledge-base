@@ -18,10 +18,10 @@
 
 ## 4. 知识点核心管理与回收站生命周期
 
-- [ ] 4.1 实现知识点 DTO 数据契约 `backend/app/schemas/knowledge.py`，覆盖创建、更新、详情、列表过滤与来源追溯
-- [ ] 4.2 实现知识点领域服务 `backend/app/services/knowledge_service.py`，支持自动纯文本派生、多标签关联、状态流转（草稿/发布/归档/移入回收站/还原/彻底删除）
-- [ ] 4.3 实现知识点及回收站 API 路由 `backend/app/api/knowledge.py`
-- [ ] 4.4 编写知识点 CRUD、生命周期流转与回收站机制集成测试 `backend/tests/test_knowledge_api.py`
+- [x] 4.1 实现知识点 DTO 数据契约 `backend/app/schemas/knowledge.py`，覆盖创建、更新、详情、列表过滤与来源追溯
+- [x] 4.2 实现知识点领域服务 `backend/app/services/knowledge_service.py`，支持自动纯文本派生、多标签关联、状态流转（草稿/发布/归档/移入回收站/还原/彻底删除）
+- [x] 4.3 实现知识点及回收站 API 路由 `backend/app/api/knowledge.py`
+- [x] 4.4 编写知识点 CRUD、生命周期流转与回收站机制集成测试 `backend/tests/test_knowledge_api.py`
 
 ## 5. 路由挂载与全量测试回归验收
 
