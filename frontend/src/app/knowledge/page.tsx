@@ -17,9 +17,10 @@ import {
   ChevronLeft,
   ChevronRight,
   RefreshCw,
-  ExternalLink,
   Sparkles,
-  FileText,
+  LayoutList,
+  LayoutGrid,
+  Edit3,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Category, KnowledgeListItem, PaginatedKnowledgeResponse, Tag } from '@/lib/types';
@@ -39,7 +40,8 @@ function KnowledgeListPageContent() {
   const [selectedTagId, setSelectedTagId] = useState<string>('');
   const [favoriteOnly, setFavoriteOnly] = useState(false);
   const [page, setPage] = useState(1);
-  const pageSize = 12;
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const pageSize = 20;
 
   // Data state
   const [data, setData] = useState<PaginatedKnowledgeResponse | null>(null);
@@ -145,7 +147,35 @@ function KnowledgeListPageContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* View Mode Toggle */}
+          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-white text-blue-600 shadow-2xs font-semibold'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="切换为列表视图"
+            >
+              <LayoutList className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-white text-blue-600 shadow-2xs font-semibold'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="切换为卡片网格"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </div>
+
           <button
             onClick={() => fetchKnowledge()}
             disabled={loading}
@@ -154,12 +184,21 @@ function KnowledgeListPageContent() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
+
           <Link
             href="/search"
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-sm font-medium transition-all shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-all shadow-2xs"
           >
-            <Sparkles className="w-4 h-4 text-blue-600" />
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
             <span>AI 搜索沉淀</span>
+          </Link>
+
+          <Link
+            href="/knowledge/new"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-all"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>新建知识点</span>
           </Link>
         </div>
       </div>
@@ -295,7 +334,7 @@ function KnowledgeListPageContent() {
         </div>
       )}
 
-      {/* Knowledge Cards Grid */}
+      {/* Knowledge Items Presentation */}
       {loading ? (
         <div className="py-20 text-center text-xs text-slate-400 flex flex-col items-center gap-2">
           <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
@@ -310,20 +349,166 @@ function KnowledgeListPageContent() {
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
             尝试放宽筛选条件，或在统一搜索中心中通过 AI 搜索将高价值结论一键沉淀入库。
           </p>
-          <Link
-            href="/search"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>去搜索沉淀</span>
-          </Link>
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <Link
+              href="/knowledge/new"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>新建第一篇知识点</span>
+            </Link>
+            <Link
+              href="/search"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>去搜索沉淀</span>
+            </Link>
+          </div>
+        </div>
+      ) : viewMode === 'list' ? (
+        /* List View (Table Mode) */
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold select-none">
+                <tr>
+                  <th className="py-3 px-3.5 w-10 text-center">收藏</th>
+                  <th className="py-3 px-4 min-w-[280px]">标题与摘要</th>
+                  <th className="py-3 px-4 w-32">分类</th>
+                  <th className="py-3 px-4 min-w-[180px]">关联标签</th>
+                  <th className="py-3 px-4 w-24">状态</th>
+                  <th className="py-3 px-4 w-28">更新时间</th>
+                  <th className="py-3 px-4 w-28 text-right">操作</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {data?.items.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-blue-50/30 transition-colors group"
+                  >
+                    {/* Favorite */}
+                    <td className="py-3 px-3.5 text-center">
+                      <button
+                        type="button"
+                        onClick={(e) => handleToggleFavorite(item, e)}
+                        className="p-1 rounded-md text-slate-300 hover:text-amber-500 transition-colors"
+                        title={item.favorite ? '取消收藏' : '加入收藏'}
+                      >
+                        <Star
+                          className={`w-3.5 h-3.5 ${
+                            item.favorite ? 'text-amber-500 fill-amber-500' : ''
+                          }`}
+                        />
+                      </button>
+                    </td>
+
+                    {/* Title & Summary */}
+                    <td className="py-3 px-4">
+                      <Link
+                        href={`/knowledge/${item.id}`}
+                        className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1 block text-sm"
+                      >
+                        {item.title}
+                      </Link>
+                      {item.summary && (
+                        <p className="mt-0.5 text-[11px] text-slate-400 line-clamp-1 leading-snug">
+                          {item.summary}
+                        </p>
+                      )}
+                    </td>
+
+                    {/* Category */}
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700">
+                        <FolderTree className="w-3 h-3 text-slate-400" />
+                        <span>{item.category_name || '未分类'}</span>
+                      </span>
+                    </td>
+
+                    {/* Tags */}
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1 flex-wrap">
+                        {item.tags?.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag.id}
+                            className="text-[10px] text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200"
+                          >
+                            #{tag.name}
+                          </span>
+                        ))}
+                        {item.tags && item.tags.length > 3 && (
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            +{item.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {item.status === 'draft' ? (
+                        <span className="inline-block text-[10px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
+                          草稿
+                        </span>
+                      ) : item.status === 'archived' ? (
+                        <span className="inline-block text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">
+                          已归档
+                        </span>
+                      ) : (
+                        <span className="inline-block text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">
+                          已发布
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Updated At */}
+                    <td className="py-3 px-4 whitespace-nowrap text-slate-400 text-[11px]">
+                      {new Date(item.updated_at).toLocaleDateString()}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1">
+                        <Link
+                          href={`/knowledge/${item.id}/edit`}
+                          className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          title="编辑知识点"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={(e) => handleExportMarkdown(item, e)}
+                          className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          title="导出 Markdown"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => handleDelete(item, e)}
+                          disabled={deletingId === item.id}
+                          className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                          title="移入回收站"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
+        /* Grid View (Card Mode) */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {data?.items.map((item) => (
-            <Link
+            <div
               key={item.id}
-              href={`/knowledge/${item.id}`}
               className="bg-white border border-slate-200 hover:border-blue-400 rounded-xl p-5 shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
             >
               <div>
@@ -363,9 +548,12 @@ function KnowledgeListPageContent() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                <Link
+                  href={`/knowledge/${item.id}`}
+                  className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug block"
+                >
                   {item.title}
-                </h3>
+                </Link>
 
                 {/* Summary */}
                 {item.summary && (
@@ -402,6 +590,13 @@ function KnowledgeListPageContent() {
                 </div>
 
                 <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                  <Link
+                    href={`/knowledge/${item.id}/edit`}
+                    className="p-1 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded"
+                    title="编辑知识点"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </Link>
                   <button
                     type="button"
                     onClick={(e) => handleExportMarkdown(item, e)}
@@ -421,7 +616,7 @@ function KnowledgeListPageContent() {
                   </button>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

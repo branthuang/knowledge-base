@@ -21,6 +21,7 @@ import {
   AlertCircle,
   Info,
   CheckCircle2,
+  Edit3,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { BlockItem, KnowledgeDetail } from '@/lib/types';
@@ -254,6 +255,14 @@ export default function KnowledgeDetailPage() {
             <Star className={`w-3.5 h-3.5 ${item.favorite ? 'text-amber-500 fill-amber-500' : ''}`} />
             <span>{item.favorite ? '已收藏' : '收藏'}</span>
           </button>
+
+          <Link
+            href={`/knowledge/${item.id}/edit`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>编辑</span>
+          </Link>
 
           <button
             type="button"
