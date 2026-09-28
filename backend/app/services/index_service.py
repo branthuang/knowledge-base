@@ -17,7 +17,7 @@ def get_default_embedding_provider() -> BaseEmbeddingProvider:
     return OpenAICompatibleEmbeddingProvider(
         api_base=settings.EMBEDDING_API_BASE,
         api_key=settings.EMBEDDING_API_KEY,
-        model=settings.EMBEDDING_MODEL_NAME,
+        model=settings.EMBEDDING_MODEL,
         expected_dimensions=settings.EMBEDDING_DIMENSIONS,
     )
 

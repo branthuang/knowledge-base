@@ -23,6 +23,18 @@ class OpenAICompatibleEmbeddingProvider(BaseEmbeddingProvider):
         return headers
 
     async def embed_texts(self, texts: List[str]) -> EmbeddingResponse:
+        if not self.api_key or self.api_key in ("mock-key", "your-api-key-here"):
+            vectors = []
+            for idx, text in enumerate(texts):
+                vec = [float((len(text) + idx + i) % 100) / 100.0 for i in range(self.expected_dimensions)]
+                vectors.append(vec)
+            return EmbeddingResponse(
+                embeddings=vectors,
+                model="local-mock-embeddings",
+                dimensions=self.expected_dimensions,
+                total_tokens=sum(len(t) for t in texts),
+            )
+
         url = f"{self.api_base}/embeddings"
         payload = {
             "model": self.model,

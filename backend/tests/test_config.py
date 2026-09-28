@@ -3,7 +3,7 @@ from app.core.config import Settings, get_settings
 
 
 def test_default_settings():
-    settings = Settings()
+    settings = Settings(_env_file=None)
     assert settings.APP_NAME == "knowledge-base"
     assert settings.DEBUG is True
     assert settings.API_PREFIX == "/api"
