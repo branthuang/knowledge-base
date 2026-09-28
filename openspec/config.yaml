@@ -1,0 +1,35 @@
+schema: spec-driven
+
+context: |
+  Project: 知识库管理系统 (Knowledge Base Management System)
+  Core Principle: "先查自己的知识，再向 AI / 公网提问；有价值的搜索结果由用户确认后沉淀为可持续维护、可检索、可追溯的知识。"
+
+  Confirmed Architecture & Decisions (2026-09-28):
+  - Tech Stack:
+    - Backend: FastAPI (Python 3.11+ / asyncpg / SQLAlchemy 2.0 / Pydantic v2)
+    - Frontend: Next.js / React (TypeScript) + Tailwind CSS + BlockSuite 块编辑器
+    - Database: PostgreSQL (业务数据) + pgvector (向量扩展)
+    - Task Queue: Redis + 异步工作流 (Celery / ARQ)
+    - Storage: 本地文件存储 / S3 兼容协议
+  - Scope Boundaries:
+    - MVP: 基础块（文本、层级标题、列表、待办、代码高亮、表格、图片、附件、分割线）、知识 CRUD、分类、标签、双路混合检索、充分性判定、AI 搜索联网回答与多源引用、收藏入库结构化预览与异步索引、知识正文 AI 优化（“简洁易懂”模式）、首页工作台、全量数据备份与恢复、派生索引全量重建。
+    - P1: Mermaid 流程图块、Canvas 自由画板块、相似知识/防重检测、完整版本历史对比与回滚、AI 优化扩展模式。
+
+  Development Rules:
+  - Do NOT invent or alter requirements.
+  - Record Open Questions when requirements are ambiguous.
+  - Prefer mature open-source libraries, avoid reinventing the wheel.
+  - Follow strict OpenSpec cycle: proposal -> specs -> design -> tasks -> apply -> verify -> archive.
+  - Task execution cycle: code -> test -> lint/typecheck -> verify criteria -> update tasks.md -> next task.
+  - Acceptance: Spec Scenario + Acceptance Criteria + Automated Tests + Actual verification.
+
+rules:
+  proposal:
+    - Never assume unverified product requirements.
+    - Explicitly state user problems and scope boundaries.
+  specs:
+    - Must follow Gherkin style (Requirement -> Scenario -> WHEN/THEN).
+    - Differentiate between MVP and future phases.
+  tasks:
+    - Break tasks down into verifiable increments.
+    - Each task must define clear verification steps (test, lint, manual check).
