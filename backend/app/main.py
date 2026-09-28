@@ -25,6 +25,17 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting up %s (env: %s)...", settings.APP_NAME, settings.APP_ENV)
+    try:
+        from app.db.session import engine, Base, AsyncSessionLocal
+        from app.db.seed import seed_default_categories
+        import app.models  # noqa: F401
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        async with AsyncSessionLocal() as session:
+            await seed_default_categories(session)
+        logger.info("Database tables and seed categories initialized successfully.")
+    except Exception as e:
+        logger.warning("DB auto-init notice: %s", e)
     yield
     logger.info("Shutting down %s...", settings.APP_NAME)
     await close_redis()

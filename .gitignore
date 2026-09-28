@@ -63,3 +63,7 @@ redis_data/
 .vscode/
 *.swp
 *.swo
+
+# Agent & Assistant Files
+.agent/
+
