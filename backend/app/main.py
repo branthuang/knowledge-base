@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.health import router as health_router
+from app.api.categories import router as categories_router
 from app.core.redis import close_redis
 
 logging.basicConfig(
@@ -39,6 +40,7 @@ app.add_middleware(
 
 # Mount API routers
 app.include_router(health_router, prefix=settings.API_PREFIX)
+app.include_router(categories_router, prefix=settings.API_PREFIX)
 
 
 @app.get("/")

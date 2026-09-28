@@ -6,9 +6,9 @@
 
 ## 2. 分类管理服务与 API（含删除保护与级联筛选）
 
-- [ ] 2.1 实现分类 DTO 数据契约 `backend/app/schemas/category.py`，支持创建、更新、树形响应
-- [ ] 2.2 实现分类领域服务 `backend/app/services/category_service.py`，包含树形构建、级联子分类展开以及删除知识保护约束
-- [ ] 2.3 实现分类 API 路由 `backend/app/api/categories.py` 并编写自动化集成测试 `backend/tests/test_category_api.py`
+- [x] 2.1 实现分类 DTO 数据契约 `backend/app/schemas/category.py`，支持创建、更新、树形响应
+- [x] 2.2 实现分类领域服务 `backend/app/services/category_service.py`，包含树形构建、级联子分类展开以及删除知识保护约束
+- [x] 2.3 实现分类 API 路由 `backend/app/api/categories.py` 并编写自动化集成测试 `backend/tests/test_category_api.py`
 
 ## 3. 标签系统服务与 API（含标签合并与统计）
 
