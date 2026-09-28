@@ -6,9 +6,9 @@
 
 ## 2. 首页知识工作台 (Workbench Dashboard)
 
-- [ ] 2.1 实现工作台宏观统计指标卡片与待整理草稿动态组件
-- [ ] 2.2 实现居中置顶统一搜索引导输入组件
-- [ ] 2.3 完成首页工作台集成 `frontend/src/app/page.tsx`（连接 `/api/workbench/stats` 与 `/api/workbench/activities`）
+- [x] 2.1 实现工作台宏观统计指标卡片与待整理草稿动态组件
+- [x] 2.2 实现居中置顶统一搜索引导输入组件
+- [x] 2.3 完成首页工作台集成 `frontend/src/app/page.tsx`（连接 `/api/workbench/stats` 与 `/api/workbench/activities`）
 
 ## 3. 统一搜索中心与知识回流抽屉
 
