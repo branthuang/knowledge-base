@@ -164,6 +164,15 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    update: (id: string, data: Partial<Tag>) =>
+      request<Tag>(`/api/tags/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      request<void>(`/api/tags/${id}`, {
+        method: 'DELETE',
+      }),
     merge: (source_tag_id: string, target_tag_id: string) =>
       request<{ status: string; message: string }>('/api/tags/merge', {
         method: 'POST',

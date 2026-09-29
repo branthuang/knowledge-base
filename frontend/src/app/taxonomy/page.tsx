@@ -47,6 +47,18 @@ export default function TaxonomyPage() {
   const [targetTagId, setTargetTagId] = useState('');
   const [merging, setMerging] = useState(false);
 
+  // Tag Rename State
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [tagToRename, setTagToRename] = useState<Tag | null>(null);
+  const [newTagNameInput, setNewTagNameInput] = useState('');
+  const [renameError, setRenameError] = useState<string | null>(null);
+  const [renaming, setRenaming] = useState(false);
+
+  // Tag Delete State
+  const [deleteTagModalOpen, setDeleteTagModalOpen] = useState(false);
+  const [tagToDelete, setTagToDelete] = useState<Tag | null>(null);
+  const [deletingTag, setDeletingTag] = useState(false);
+
   // Tree Expansion State
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
 
@@ -179,6 +191,60 @@ export default function TaxonomyPage() {
       alert('合并标签失败: ' + err.message);
     } finally {
       setMerging(false);
+    }
+  };
+
+  const handleOpenRenameModal = (tag: Tag) => {
+    setTagToRename(tag);
+    setNewTagNameInput(tag.name);
+    setRenameError(null);
+    setRenameModalOpen(true);
+  };
+
+  const handleSaveRename = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tagToRename) return;
+    const trimmed = newTagNameInput.trim();
+    if (!trimmed) {
+      setRenameError('标签名称不能为空');
+      return;
+    }
+    if (trimmed === tagToRename.name) {
+      setRenameModalOpen(false);
+      return;
+    }
+
+    try {
+      setRenaming(true);
+      setRenameError(null);
+      await api.tags.update(tagToRename.id, { name: trimmed });
+      setRenameModalOpen(false);
+      setTagToRename(null);
+      loadData();
+    } catch (err: any) {
+      setRenameError(err.message || '修改标签名称失败');
+    } finally {
+      setRenaming(false);
+    }
+  };
+
+  const handleInitiateDeleteTag = (tag: Tag) => {
+    setTagToDelete(tag);
+    setDeleteTagModalOpen(true);
+  };
+
+  const handleConfirmDeleteTag = async () => {
+    if (!tagToDelete) return;
+    try {
+      setDeletingTag(true);
+      await api.tags.delete(tagToDelete.id);
+      setDeleteTagModalOpen(false);
+      setTagToDelete(null);
+      await loadData();
+    } catch (err: any) {
+      alert('删除标签失败: ' + (err?.message || '未知错误'));
+    } finally {
+      setDeletingTag(false);
     }
   };
 
@@ -384,6 +450,31 @@ export default function TaxonomyPage() {
                   <span className="font-mono text-[10px] text-slate-400 bg-white px-1.5 py-0.2 rounded-full border border-slate-100">
                     {tag.knowledge_count || 0}
                   </span>
+                  {/* Hover Actions */}
+                  <div className="hidden group-hover:flex items-center gap-0.5 ml-1 pl-1 border-l border-slate-200">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenRenameModal(tag);
+                      }}
+                      className="p-0.5 text-slate-400 hover:text-purple-600 hover:bg-white rounded transition-colors"
+                      title="重命名标签"
+                    >
+                      <Edit2 className="w-3 h-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleInitiateDeleteTag(tag);
+                      }}
+                      className="p-0.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded transition-colors"
+                      title="删除标签"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -620,6 +711,124 @@ export default function TaxonomyPage() {
                 className="px-4 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-semibold"
               >
                 {merging ? '合并中...' : '确认原子合并'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 4: Lightweight Tag Rename */}
+      {renameModalOpen && tagToRename && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <TagIcon className="w-4 h-4 text-purple-600" />
+                <h3 className="text-sm font-bold text-slate-800">
+                  重命名标签
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRenameModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveRename} className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">
+                  标签名称 <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-slate-400 font-medium">#</span>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    value={newTagNameInput}
+                    onChange={(e) => {
+                      setNewTagNameInput(e.target.value);
+                      if (renameError) setRenameError(null);
+                    }}
+                    placeholder="输入新标签名称..."
+                    className="w-full pl-7 pr-3 py-2 rounded-lg border border-slate-200 focus:border-purple-500 outline-none"
+                  />
+                </div>
+                {renameError && (
+                  <p className="mt-1.5 text-[11px] text-rose-500 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3 shrink-0" />
+                    <span>{renameError}</span>
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setRenameModalOpen(false)}
+                  disabled={renaming}
+                  className="px-3.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  disabled={renaming || !newTagNameInput.trim()}
+                  className="px-4 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-semibold"
+                >
+                  {renaming ? '保存中...' : '保存'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 5: Safe Tag Unlink & Delete Modal */}
+      {deleteTagModalOpen && tagToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div className="flex items-center gap-2.5 text-rose-600">
+              <AlertTriangle className="w-5 h-5 shrink-0" />
+              <h3 className="text-sm font-bold text-slate-800">
+                删除标签确认
+              </h3>
+            </div>
+
+            <div className="text-xs text-slate-600 leading-relaxed space-y-2">
+              <p>
+                确定要删除标签 <span className="font-bold text-slate-900">“#{tagToDelete.name}”</span> 吗？
+              </p>
+              {Boolean(tagToDelete.knowledge_count && tagToDelete.knowledge_count > 0) ? (
+                <div className="text-amber-800 bg-amber-50 p-2.5 rounded-lg border border-amber-200 leading-relaxed">
+                  当前标签已关联 <strong>{tagToDelete.knowledge_count}</strong> 篇知识点。确认删除后，系统将自动从所有关联知识点中<strong>解绑该标签</strong>，知识点本身保留且不受影响。
+                </div>
+              ) : (
+                <p className="text-slate-400">
+                  当前标签未关联任何知识点，删除后将彻底移除。
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 text-xs">
+              <button
+                type="button"
+                onClick={() => setDeleteTagModalOpen(false)}
+                disabled={deletingTag}
+                className="px-3.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium"
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteTag}
+                disabled={deletingTag}
+                className="px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-semibold"
+              >
+                {deletingTag ? '删除中...' : '确认解绑删除'}
               </button>
             </div>
           </div>
