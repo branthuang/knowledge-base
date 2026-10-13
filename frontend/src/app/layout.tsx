@@ -105,7 +105,7 @@ export default function RootLayout({
                 FastAPI 引擎联通
               </span>
               <a
-                href="http://localhost:8000/docs"
+                href="/docs"
                 target="_blank"
                 rel="noreferrer"
                 className="text-blue-500 hover:underline flex items-center gap-0.5"
