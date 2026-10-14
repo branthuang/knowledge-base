@@ -323,3 +323,25 @@ async def test_ai_search_http_endpoints(ai_search_db):
         ai_search_api_module.default_ai_search_service = original_svc
         app.dependency_overrides.clear()
 
+
+def test_default_providers_and_settings():
+    """Verify that default provider initializers read configuration without AttributeError."""
+    from app.services.ai_search_service import get_default_llm_provider, get_default_search_provider
+    from app.services.optimization_service import get_default_llm_provider as get_opt_llm_provider
+    from app.core.config import settings
+
+    # Check Settings properties
+    assert settings.LLM_MODEL
+    assert settings.LLM_MODEL_NAME == settings.LLM_MODEL
+
+    # Check default provider creation
+    llm = get_default_llm_provider()
+    assert llm.model == settings.LLM_MODEL
+
+    opt_llm = get_opt_llm_provider()
+    assert opt_llm.model == settings.LLM_MODEL
+
+    search = get_default_search_provider()
+    assert search is not None
+
+

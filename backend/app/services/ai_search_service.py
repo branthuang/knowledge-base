@@ -27,7 +27,7 @@ def get_default_llm_provider() -> BaseLLMProvider:
     return OpenAICompatibleProvider(
         api_base=settings.LLM_API_BASE,
         api_key=settings.LLM_API_KEY,
-        model=settings.LLM_MODEL_NAME,
+        model=settings.LLM_MODEL,
     )
 
 

@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     LLM_API_KEY: str = ""
     LLM_MODEL: str = "gpt-4o-mini"
 
+    @property
+    def LLM_MODEL_NAME(self) -> str:
+        return self.LLM_MODEL
+
     # Embedding Settings (OpenAI-compatible)
     EMBEDDING_API_BASE: str = "https://api.openai.com/v1"
     EMBEDDING_API_KEY: str = ""
